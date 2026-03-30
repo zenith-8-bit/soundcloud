@@ -1,0 +1,116 @@
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+15&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+       
+        body{
+font-family: "Jersey 15", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  background-color: rgb(74, 103, 103);
+  color:rgb(229, 215, 210);
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+        }
+        h1{
+            font-size:80px;
+            
+        }
+        input{
+            background-color: white;
+            height:40px;
+            width:240px;
+            border:10px white;
+            border-radius:12px;
+            outline: none;
+            padding:20px;
+
+        }
+        button{
+              background-color: white;
+              padding:10px;
+              margin-left:5px;
+            height:40px;
+            width:60px;
+            border:10px white;
+            border-radius:12px;
+            color:rgb(107, 64, 19);
+            font-weight:400;
+            
+
+        }
+        button:hover{
+            background-color: black;
+            color:white;
+
+        }
+        button:active{
+            background-color: black;
+            color:ghostwhite;
+            transform: translateY(2px);
+        }
+        .box > *{
+    display:none;
+      
+}
+a{
+    color:bisque;
+}
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>SOUND-CLOUD</h1>
+        <p style="color:rgb(104, 184, 73);width:400px;">a simple app built to share audio from one computer to another through the internet with minimum friction simply create a unique token write it down on the input box and click on connect volla enjoy the shared audio experience</p>
+        <div class="retractable">
+            <input placeholder=".   enter you unique identifier" >
+            <button class="vrfy">connect</button>
+            <p>temp text that will be retracted and changed according to usecase</p>
+        </div>
+        
+        <div class="footer">
+            <div class="f34"><button class="qrty1" style="width:400px;margin:4px;padding:10px;background-color:rgb(197, 149, 141);">create a transmitter</button><div class="qrty">this is the code: code</div></div>
+            <p>made by zenith-8-bit <a href="https://github.com/zenith-8-bit" >github</a></p></div></div>
+        
+    </div>
+    <div class="oanel">
+        <h1>AUDIO PANEL</h1>
+        <p>type:reciever/ transmitter</p>
+        <p>connection status: dead</p>
+        <div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+</div>
+        
+    </div>
+<script>
+$(document).ready(function(){
+    $('.oanel').hide();
+    $(".box h1").slideDown(600, function(){
+        $(".box p").first().slideDown(600, function(){
+            $(".retractable").slideDown(600,function(){
+                $(".footer").first().slideDown(600);
+                $('.qrty').hide();
+            });
+        });
+    });
+    $('.qrty1').click(function(){
+        $('.qrty1').hide();
+        $('.qrty').show();
+
+    });
+    $('.vrfy').click(function(){
+        $('.box').hide();
+        $('.oanel').show();
+    });
+    
+
+});
+</script>
+</body>
+</html>
