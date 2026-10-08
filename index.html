@@ -1,1483 +1,997 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html> <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SOUND-CLOUD</title>
+<title>SOUND-CLOUD</title>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Jersey+15&display=swap"
-        rel="stylesheet"
-    >
+<link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <style>
+<link href="https://fonts.googleapis.com/css2?family=Jersey+15&display=swap" rel="stylesheet"
 
-        * {
-            box-sizing: border-box;
-        }
+<style>
 
-        body {
+* { box-sizing: border-box; }
 
-            margin: 0;
-            min-height: 100vh;
+body { margin: 0; min-height: 100vh;
 
-            font-family: "Jersey 15", sans-serif;
+font-family: "Jersey 15", sans-serif;
 
-            background-color: rgb(74, 103, 103);
-            color: rgb(229, 215, 210);
+background-color: rgb(74, 103, 103); color: rgb(229, 215, 210);
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+display: flex; justify-content: center; align-items: center;
 
-        }
+padding: 20px; }
 
+.box, .panel { width: min(92%, 750px); text-align: center; }
 
-        /* =========================
-           MAIN CONTAINER
-        ========================= */
+h1 { font-size: clamp(55px, 10vw, 90px); margin: 0 0 20px; }
 
-        .box,
-        .panel {
+.description { color: rgb(104, 184, 73); max-width: 520px; margin: 0 auto 30px; font-size: 20px; line-height: 1.3; }
 
-            width: min(92%, 750px);
+/* ========================= INPUTS ========================= */
 
-            text-align: center;
+input[type="text"] { background-color: white;
 
-        }
+height: 45px; width: 270px;
 
+border: none; border-radius: 12px;
 
-        h1 {
+outline: none;
 
-            font-size: clamp(55px, 10vw, 90px);
+padding: 10px 15px;
 
-            margin: 0 0 20px;
+font-family: inherit; font-size: 18px; }
 
-        }
+button { background-color: white;
 
+padding: 10px; margin: 5px;
 
-        .description {
+min-height: 45px;
 
-            color: rgb(104, 184, 73);
+border: none; border-radius: 12px;
 
-            max-width: 520px;
+color: rgb(107, 64, 19);
 
-            margin: 0 auto 30px;
+font-family: inherit; font-size: 18px;
 
-            font-size: 20px;
+cursor: pointer;
 
-            line-height: 1.3;
+transition: 0.15s; }
 
-        }
+button:hover { background-color: black; color: white; }
 
+button:active { transform: translateY(2px); }
 
-        /* =========================
-           INPUTS
-        ========================= */
+button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        input[type="text"] {
+.create-btn { width: min(100%, 400px);
 
-            background-color: white;
+margin-top: 20px;
 
-            height: 45px;
+background-color: rgb(197, 149, 141); }
 
-            width: 270px;
+/* ========================= SIGNALING ========================= */
 
-            border: none;
+.signal-box { display: none;
 
-            border-radius: 12px;
+margin: 20px auto;
 
-            outline: none;
+padding: 20px;
 
-            padding: 10px 15px;
+max-width: 650px;
 
-            font-family: inherit;
+background: rgba(0, 0, 0, 0.18);
 
-            font-size: 18px;
+border-radius: 15px; }
 
-        }
+.signal-box textarea { width: 100%;
 
+min-height: 150px;
 
-        button {
+resize: vertical;
 
-            background-color: white;
+border: none; border-radius: 10px;
 
-            padding: 10px;
+padding: 12px;
 
-            margin: 5px;
+font-family: monospace; font-size: 12px;
 
-            min-height: 45px;
+outline: none; }
 
-            border: none;
+.signal-title { color: #f6d365; font-size: 22px; }
 
-            border-radius: 12px;
+.status { font-size: 20px; color: #f6d365; }
 
-            color: rgb(107, 64, 19);
+.error { color: #ff8585 !important; }
 
-            font-family: inherit;
+/* ========================= AUDIO PANEL ========================= */
 
-            font-size: 18px;
+.panel { display: none; }
 
-            cursor: pointer;
+.panel-content { padding: 30px;
 
-            transition: 0.15s;
+background: rgba(0, 0, 0, 0.15);
 
-        }
+border-radius: 20px; }
 
+.connection { font-size: 25px; }
 
-        button:hover {
+.connected { color: #68e05d; }
 
-            background-color: black;
+.disconnected { color: #ff7272; }
 
-            color: white;
+.slider { width: 80%;
 
-        }
+accent-color: rgb(197, 149, 141); }
 
+.footer { margin-top: 30px; }
 
-        button:active {
+a { color: bisque; }
 
-            transform: translateY(2px);
+.hidden { display: none !important; }
 
-        }
+.loading { opacity: 0.7; }
 
-
-        .create-btn {
-
-            width: min(100%, 400px);
-
-            margin-top: 20px;
-
-            background-color: rgb(197, 149, 141);
-
-        }
-
-
-        /* =========================
-           SIGNALING
-        ========================= */
-
-        .signal-box {
-
-            display: none;
-
-            margin: 20px auto;
-
-            padding: 20px;
-
-            max-width: 650px;
-
-            background: rgba(0, 0, 0, 0.18);
-
-            border-radius: 15px;
-
-        }
-
-
-        .signal-box textarea {
-
-            width: 100%;
-
-            min-height: 150px;
-
-            resize: vertical;
-
-            border: none;
-
-            border-radius: 10px;
-
-            padding: 12px;
-
-            font-family: monospace;
-
-            font-size: 12px;
-
-        }
-
-
-        .signal-title {
-
-            color: #f6d365;
-
-            font-size: 22px;
-
-        }
-
-
-        .status {
-
-            font-size: 20px;
-
-            color: #f6d365;
-
-        }
-
-
-        .error {
-
-            color: #ff8585;
-
-        }
-
-
-        /* =========================
-           AUDIO PANEL
-        ========================= */
-
-        .panel {
-
-            display: none;
-
-        }
-
-
-        .panel-content {
-
-            padding: 30px;
-
-            background: rgba(0, 0, 0, 0.15);
-
-            border-radius: 20px;
-
-        }
-
-
-        .connection {
-
-            font-size: 25px;
-
-        }
-
-
-        .connected {
-
-            color: #68e05d;
-
-        }
-
-
-        .disconnected {
-
-            color: #ff7272;
-
-        }
-
-
-        .slider {
-
-            width: 80%;
-
-            accent-color: rgb(197, 149, 141);
-
-        }
-
-
-        .footer {
-
-            margin-top: 30px;
-
-        }
-
-
-        a {
-
-            color: bisque;
-
-        }
-
-
-        .hidden {
-
-            display: none !important;
-
-        }
-
-    </style>
+</style>
 
 </head>
 
-
 <body>
 
+<!-- ================================================== HOME SCREEN ================================================== -->
 
-<!-- ==================================================
-     HOME SCREEN
-================================================== -->
+<div class="box" id="homeScreen">
 
-<div class="box">
+<h1 id="mainTitle"> SOUND-CLOUD </h1>
 
-    <h1>SOUND-CLOUD</h1>
+<p class="description" id="description">
 
+Share browser audio directly between devices using peer-to-peer WebRTC.
 
-    <p class="description">
+No microphone required.
 
-        Share browser audio directly between devices using
-        peer-to-peer WebRTC.
+</p>
 
-        No microphone required.
+<!-- ========================= RECEIVER ========================= -->
 
-    </p>
+<div class="retractable" id="receiverSection">
 
+<input type="text" id="offerInput" placeholder="paste offer code" autocomplete="off" >
 
-    <!-- =========================
-         RECEIVER CONNECT
-    ========================= -->
+<button id="receiverBtn"> connect </button>
 
-    <div class="retractable">
-
-        <input
-            type="text"
-            id="offerInput"
-            placeholder="paste offer code"
-        >
-
-        <button id="receiverBtn">
-            connect
-        </button>
-
-        <p id="homeStatus" class="status">
-            waiting...
-        </p>
-
-    </div>
-
-
-    <!-- =========================
-         TRANSMITTER
-    ========================= -->
-
-    <button
-        id="createBtn"
-        class="create-btn"
-    >
-        create a transmitter
-    </button>
-
-
-    <!-- =========================
-         SIGNALING
-    ========================= -->
-
-    <div
-        id="signalBox"
-        class="signal-box"
-    >
-
-        <p
-            id="signalTitle"
-            class="signal-title"
-        >
-            connection code
-        </p>
-
-
-        <textarea
-            id="signalOutput"
-            readonly
-        ></textarea>
-
-
-        <button id="copyBtn">
-            copy code
-        </button>
-
-
-        <!--
-            Transmitter uses this to paste
-            the receiver's answer.
-        -->
-
-        <div id="answerSection">
-
-            <p>
-                Paste the receiver's answer below:
-            </p>
-
-
-            <textarea
-                id="answerInput"
-                placeholder="paste answer code here..."
-            ></textarea>
-
-
-            <button id="applyAnswerBtn">
-                apply answer
-            </button>
-
-        </div>
-
-
-        <p id="signalStatus" class="status"></p>
-
-    </div>
-
-
-    <div class="footer">
-
-        <p>
-
-            made by zenith-8-bit
-
-            <a
-                href="https://github.com/zenith-8-bit"
-                target="_blank"
-            >
-                github
-            </a>
-
-        </p>
-
-    </div>
+<p id="homeStatus" class="status"> waiting... </p>
 
 </div>
 
+<!-- ========================= TRANSMITTER ========================= -->
 
+<button id="createBtn" class="create-btn"
 
-<!-- ==================================================
-     AUDIO PANEL
-================================================== -->
+create a transmitter </button>
 
-<div class="panel">
+<!-- ========================= SIGNALING ========================= -->
 
-    <h1>AUDIO PANEL</h1>
+<div id="signalBox" class="signal-box"
 
+<p id="signalTitle" class="signal-title" > connection code </p>
 
-    <div class="panel-content">
+<textarea id="signalOutput" readonly spellcheck="false" ></textarea>
 
+<button id="copyBtn"> copy code </button>
 
-        <p id="role">
-            type: unknown
-        </p>
+<!-- TRANSMITTER ANSWER SECTION -->
 
+<div id="answerSection">
 
-        <p class="connection">
+<p> Paste the receiver's answer below: </p>
 
-            connection status:
+<textarea id="answerInput" placeholder="paste answer code here..." spellcheck="false" ></textarea>
 
-            <span
-                id="connectionStatus"
-                class="disconnected"
-            >
-                disconnected
-            </span>
-
-        </p>
-
-
-        <p id="audioStatus">
-            waiting for audio...
-        </p>
-
-
-        <label>
-
-            volume
-
-            <br>
-
-            <input
-                type="range"
-                min="0"
-                max="100"
-                value="100"
-                id="volume"
-                class="slider"
-            >
-
-        </label>
-
-
-        <br><br>
-
-
-        <button id="backBtn">
-            back
-        </button>
-
-    </div>
+<button id="applyAnswerBtn"> apply answer </button>
 
 </div>
 
+<p id="signalStatus" class="status" ></p>
 
+</div>
+
+<div class="footer">
+
+<p>
+
+made by zenith-8-bit
+
+<a href="https://github.com/zenith-8-bit" target="_blank" rel="noopener noreferrer" > github </a>
+
+</p>
+
+</div>
+
+</div>
+
+<!-- ================================================== AUDIO PANEL ================================================== -->
+
+<div class="panel" id="audioPanel">
+
+<h1> AUDIO PANEL </h1>
+
+<div class="panel-content">
+
+<p id="role"> type: unknown </p>
+
+<p class="connection">
+
+connection status:
+
+<span id="connectionStatus" class="disconnected" > disconnected </span>
+
+</p>
+
+<p id="audioStatus"> waiting for audio... </p>
+
+<label>
+
+volume
+
+<br>
+
+<input type="range" min="0" max="100" value="100" id="volume" class="slider" >
+
+</label>
+
+<br> <br>
+
+<button id="backBtn"> back </button>
+
+</div>
+
+</div>
 
 <script>
 
 $(document).ready(function () {
 
+/* * ===================================================== * VARIABLES * ===================================================== */
 
-    /*
-     * =====================================================
-     * VARIABLES
-     * =====================================================
-     */
+let peerConnection = null;
 
+let localAudioStream = null;
 
-    let peerConnection = null;
+let remoteAudioStream = null;
 
-    let localAudioStream = null;
+let remoteAudioElement = null;
 
-    let remoteAudioStream = null;
+let role = null;
 
-    let remoteAudioElement = null;
+/* * ===================================================== * WEBRTC CONFIGURATION * ===================================================== * * STUN helps the two devices discover their public * network paths. */
 
-    let role = null;
+const rtcConfig = {
 
+iceServers: [
 
-    /*
-     * STUN SERVER
-     *
-     * Helps peers discover how to connect.
-     *
-     * Google provides this public STUN server.
-     */
+{ urls: "stun:stun.l.google.com:19302" }
 
-    const rtcConfig = {
+]
 
-        iceServers: [
+};
 
-            {
-                urls: "stun:stun.l.google.com:19302"
-            }
+/* * ===================================================== * INITIAL ANIMATION * ===================================================== */
 
-        ]
+$("#mainTitle").hide();
 
-    };
+$("#description").hide();
 
+$("#receiverSection").hide();
 
-    /*
-     * =====================================================
-     * INITIAL ANIMATION
-     * =====================================================
-     */
+$(".footer").hide();
 
+$("#mainTitle").slideDown(600, function () {
 
-    $(".box h1").hide();
+$("#description").slideDown(600, function () {
 
-    $(".description").hide();
+$("#receiverSection").slideDown(600, function () {
 
-    $(".retractable").hide();
+$(".footer").slideDown(600);
 
-    $(".footer").hide();
+});
 
+});
 
-    $(".box h1").slideDown(600, function () {
+});
 
-        $(".description").slideDown(600, function () {
+/* * ===================================================== * WAIT FOR ICE GATHERING * ===================================================== * * This is important. * * The transmitter cannot create the final copy/paste * code until WebRTC has gathered its ICE candidates. */
 
-            $(".retractable").slideDown(600, function () {
+function waitForIceGatheringComplete(pc) {
 
-                $(".footer").slideDown(600);
+return new Promise(function (resolve) {
 
-            });
+/* * Already complete. */
 
-        });
+if (pc.iceGatheringState === "complete") {
 
-    });
+resolve();
 
+return; }
 
-    /*
-     * =====================================================
-     * CREATE PEER CONNECTION
-     * =====================================================
-     */
+/* * Wait for state changes. */
 
+function checkState() {
 
-    function createPeerConnection() {
+console.log( "ICE gathering state:", pc.iceGatheringState );
 
+if ( pc.iceGatheringState === "complete" ) {
 
-        peerConnection =
-            new RTCPeerConnection(rtcConfig);
+pc.removeEventListener( "icegatheringstatechange", checkState );
 
+resolve();
 
-        /*
-         * -----------------------------------------------
-         * ICE CANDIDATE
-         * -----------------------------------------------
-         *
-         * We wait until ICE gathering finishes.
-         *
-         * This is important because our signaling is
-         * manual copy/paste.
-         */
+}
 
+}
 
-        peerConnection.onicecandidate =
-            function (event) {
+pc.addEventListener( "icegatheringstatechange", checkState );
 
+/* * Safety fallback. * * Normally ICE finishes much sooner. */
 
-                if (event.candidate === null) {
+setTimeout(function () {
 
+if ( pc.iceGatheringState !== "complete" ) {
 
-                    console.log(
-                        "ICE gathering complete"
-                    );
+console.warn( "ICE gathering timeout" );
 
+pc.removeEventListener( "icegatheringstatechange", checkState );
 
-                    if (
-                        peerConnection.localDescription
-                    ) {
+resolve();
 
+}
 
-                        const code =
-                            encodeSignal(
-                                peerConnection.localDescription
-                            );
+}, 15000);
 
+});
 
-                        $("#signalOutput")
-                            .val(code);
+}
 
+/* * ===================================================== * CREATE PEER CONNECTION * ===================================================== */
 
-                        $("#signalStatus")
-                            .text(
-                                "code ready — copy it to the other device"
-                            );
+function createPeerConnection() {
 
+if (peerConnection) {
 
-                    }
+try { peerConnection.close(); } catch (error) { console.warn(error); }
 
-                }
+}
 
-            };
+peerConnection = new RTCPeerConnection(rtcConfig);
 
+/* * ----------------------------------------------- * ICE CANDIDATES * ----------------------------------------------- * * We don't generate the signaling code here. * * Instead, we wait for ICE gathering to finish * after setLocalDescription(). */
 
-        /*
-         * -----------------------------------------------
-         * CONNECTION STATE
-         * -----------------------------------------------
-         */
+peerConnection.onicecandidate = function (event) {
 
+if (event.candidate) {
 
-        peerConnection.onconnectionstatechange =
-            function () {
+console.log( "ICE candidate received" );
 
+} else {
 
-                const state =
-                    peerConnection.connectionState;
+console.log( "ICE gathering complete" );
 
+}
 
-                console.log(
-                    "WebRTC:",
-                    state
-                );
+};
 
+/* * ----------------------------------------------- * ICE GATHERING STATE * ----------------------------------------------- */
 
-                $("#connectionStatus")
-                    .text(state);
+peerConnection.onicegatheringstatechange = function () {
 
+console.log( "ICE gathering:", peerConnection.iceGatheringState );
 
-                if (state === "connected") {
+};
 
+/* * ----------------------------------------------- * CONNECTION STATE * ----------------------------------------------- */
 
-                    $("#connectionStatus")
-                        .removeClass(
-                            "disconnected"
-                        )
-                        .addClass(
-                            "connected"
-                        );
+peerConnection.onconnectionstatechange = function () {
 
+const state = peerConnection.connectionState;
 
-                    $("#audioStatus")
-                        .text(
-                            "WebRTC connection established"
-                        );
+console.log( "WebRTC connection:", state );
 
-                }
+$("#connectionStatus") .text(state);
 
+if (state === "connected") {
 
-                if (
-                    state === "failed" ||
-                    state === "disconnected" ||
-                    state === "closed"
-                ) {
+$("#connectionStatus") .removeClass("disconnected") .addClass("connected");
 
+$("#audioStatus") .text( role === "transmitter" ? "audio is being transmitted" : "receiving browser audio" );
 
-                    $("#connectionStatus")
-                        .removeClass(
-                            "connected"
-                        )
-                        .addClass(
-                            "disconnected"
-                        );
+}
 
-                }
+else if ( state === "failed" ) {
 
-            };
+$("#connectionStatus") .removeClass("connected") .addClass("disconnected");
 
+$("#audioStatus") .text( "connection failed" );
 
-        /*
-         * -----------------------------------------------
-         * RECEIVE AUDIO
-         * -----------------------------------------------
-         */
+}
 
+else if ( state === "disconnected" ) {
 
-        peerConnection.ontrack =
-            function (event) {
+$("#connectionStatus") .removeClass("connected") .addClass("disconnected");
 
+$("#audioStatus") .text( "connection disconnected" );
 
-                console.log(
-                    "Remote audio received"
-                );
+}
 
+else if ( state === "closed" ) {
 
-                remoteAudioStream =
-                    event.streams[0];
+$("#connectionStatus") .removeClass("connected") .addClass("disconnected");
 
+$("#audioStatus") .text( "connection closed" );
 
-                /*
-                 * Create an audio element.
-                 */
+}
 
+};
 
-                if (!remoteAudioElement) {
+/* * ----------------------------------------------- * ICE CONNECTION STATE * ----------------------------------------------- */
 
+peerConnection.oniceconnectionstatechange = function () {
 
-                    remoteAudioElement =
-                        document.createElement(
-                            "audio"
-                        );
+console.log( "ICE connection state:", peerConnection.iceConnectionState );
 
+};
 
-                    remoteAudioElement.autoplay =
-                        true;
+/* * ----------------------------------------------- * RECEIVE AUDIO * ----------------------------------------------- */
 
+peerConnection.ontrack = function (event) {
 
-                    remoteAudioElement.controls =
-                        false;
+console.log( "Remote track received:", event.track.kind );
 
+if ( event.track.kind !== "audio" ) {
 
-                    document.body.appendChild(
-                        remoteAudioElement
-                    );
+return;
 
-                }
+}
 
+remoteAudioStream = event.streams[0];
 
-                remoteAudioElement.srcObject =
-                    remoteAudioStream;
+/* * Create audio element once. */
 
+if (!remoteAudioElement) {
 
-                remoteAudioElement.volume =
-                    $("#volume").val() / 100;
+remoteAudioElement = document.createElement("audio");
 
+remoteAudioElement.autoplay = true;
 
-                /*
-                 * Some browsers require
-                 * play() after assigning
-                 * the stream.
-                 */
+remoteAudioElement.controls = false;
 
+remoteAudioElement.playsInline = true;
 
-                remoteAudioElement
-                    .play()
-                    .catch(function (error) {
+document.body.appendChild( remoteAudioElement );
 
-                        console.log(
-                            "Autoplay blocked:",
-                            error
-                        );
+}
 
-                        $("#audioStatus")
-                            .text(
-                                "click the page to start audio"
-                            );
+remoteAudioElement.srcObject = remoteAudioStream;
 
-                    });
+remoteAudioElement.volume = Number( $("#volume").val() ) / 100;
 
+/* * Try autoplay. */
 
-                $("#audioStatus")
-                    .text(
-                        "receiving browser audio"
-                    );
+remoteAudioElement .play() .then(function () {
 
-            };
+$("#audioStatus") .text( "receiving browser audio" );
 
+}) .catch(function (error) {
 
-    }
+console.warn( "Autoplay blocked:", error );
 
+$("#audioStatus") .text( "click anywhere to start audio" );
 
-    /*
-     * =====================================================
-     * CREATE TRANSMITTER
-     * =====================================================
-     */
+});
 
+};
 
-    $("#createBtn").click(
-        async function () {
+}
 
+/* * ===================================================== * USER INTERACTION TO UNBLOCK AUDIO * ===================================================== */
 
-            try {
+$(document).one( "click touchstart keydown", function () {
 
+if ( remoteAudioElement && remoteAudioElement.srcObject ) {
 
-                role =
-                    "transmitter";
+remoteAudioElement .play() .catch(function () {});
 
+}
 
-                $("#homeStatus")
-                    .text(
-                        "choose the browser audio to share..."
-                    );
+} );
 
+/* * ===================================================== * CREATE TRANSMITTER * ===================================================== */
 
-                /*
-                 * IMPORTANT:
-                 *
-                 * getDisplayMedia captures a screen,
-                 * browser tab or window.
-                 *
-                 * The user can select:
-                 *
-                 * Browser tab + Share audio
-                 *
-                 * This is NOT microphone capture.
-                 */
+$("#createBtn").click( async function () {
 
+try {
 
-                localAudioStream =
-                    await navigator.mediaDevices
-                        .getDisplayMedia({
+$("#createBtn") .prop("disabled", true);
 
-                            video: true,
+$("#homeStatus") .removeClass("error") .text( "choose the browser tab/window to share..." );
 
-                            audio: true
+/* * Check API. */
 
-                        });
+if ( !navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia ) {
 
+throw new Error( "getDisplayMedia is not supported by this browser." );
 
-                console.log(
-                    "Browser/system capture started"
-                );
+}
 
+/* * Browser asks the user what to share. * * video:true is required by many browsers * for display capture. * * We will ONLY send the audio track * through WebRTC. */
 
-                /*
-                 * We only want AUDIO.
-                 *
-                 * WebRTC will not send the video track.
-                 */
+localAudioStream = await navigator.mediaDevices .getDisplayMedia({
 
+video: true,
 
-                const audioTracks =
-                    localAudioStream
-                        .getAudioTracks();
+audio: true
 
+});
 
-                if (
-                    audioTracks.length === 0
-                ) {
+console.log( "Display capture started" );
 
+/* * Get audio tracks. */
 
-                    alert(
-                        "No audio was selected.\n\n" +
-                        "When sharing a browser tab, enable \"Share audio\"."
-                    );
+const audioTracks = localAudioStream.getAudioTracks();
 
+if ( audioTracks.length === 0 ) {
 
-                    localAudioStream
-                        .getTracks()
-                        .forEach(
-                            track => track.stop()
-                        );
+localAudioStream .getTracks() .forEach(function (track) {
 
+track.stop();
 
-                    return;
+});
 
-                }
+throw new Error( "No audio was selected. When sharing a browser tab, enable "Share audio"." );
 
+}
 
-                /*
-                 * Create peer.
-                 */
+console.log( "Audio tracks:", audioTracks.length );
 
+/* * Create WebRTC connection. */
 
-                createPeerConnection();
+createPeerConnection();
 
+/* * Add ONLY audio tracks. */
 
-                /*
-                 * Add ONLY audio.
-                 */
+audioTracks.forEach( function (track) {
 
+peerConnection.addTrack( track, localAudioStream );
 
-                audioTracks.forEach(
-                    function (track) {
+} );
 
+/* * Stop local video capture. * * We don't transmit video. */
 
-                        peerConnection.addTrack(
-                            track,
-                            localAudioStream
-                        );
+localAudioStream .getVideoTracks() .forEach( function (track) {
 
+track.stop();
 
-                    }
-                );
+} );
 
+/* * ----------------------------------------- * CREATE OFFER * ----------------------------------------- */
 
-                /*
-                 * Stop the video track.
-                 *
-                 * We requested video because
-                 * browsers expose audio sharing
-                 * through getDisplayMedia().
-                 */
+$("#homeStatus") .text( "creating transmission code..." );
 
+const offer = await peerConnection.createOffer();
 
-                localAudioStream
-                    .getVideoTracks()
-                    .forEach(
-                        function (track) {
+await peerConnection .setLocalDescription(offer);
 
-                            track.stop();
+console.log( "Local description created" );
 
-                        }
-                    );
+/* * ----------------------------------------- * WAIT FOR ICE * ----------------------------------------- */
 
+$("#homeStatus") .text( "gathering connection information..." );
 
-                /*
-                 * Create OFFER.
-                 */
+await waitForIceGatheringComplete( peerConnection );
 
+/* * ----------------------------------------- * GENERATE SIGNAL CODE * ----------------------------------------- */
 
-                const offer =
-                    await peerConnection
-                        .createOffer();
+const localDescription = peerConnection.localDescription;
 
+if (!localDescription) {
 
-                await peerConnection
-                    .setLocalDescription(
-                        offer
-                    );
+throw new Error( "WebRTC did not generate a local description." );
 
+}
 
-                /*
-                 * Show signaling screen.
-                 */
+const code = encodeSignal( localDescription );
 
+console.log( "Offer code generated:", code.length, "characters" );
 
-                $("#signalTitle")
-                    .text(
-                        "OFFER — send this to the receiver"
-                    );
+/* * ----------------------------------------- * SHOW SIGNALING UI * ----------------------------------------- * * IMPORTANT: * * We keep .box visible because signalBox * is inside it. */
 
+$(".box").show();
 
-                $("#answerSection")
-                    .show();
+$(".panel").hide();
 
+$("#signalBox") .show();
 
-                $(".box").hide();
+$("#signalTitle") .text( "OFFER — send this to the receiver" );
 
-                $(".panel").show();
+$("#signalOutput") .val(code);
 
+$("#answerSection") .show();
 
-                $("#role")
-                    .text(
-                        "type: transmitter"
-                    );
+$("#signalStatus") .removeClass("error") .text( "code ready — copy it to the receiver" );
 
+$("#homeStatus") .text( "transmitter ready" );
 
-                $("#audioStatus")
-                    .text(
-                        "sharing browser audio..."
-                    );
+/* * Show audio panel information. */
 
+$("#role") .text( "type: transmitter" );
 
-                /*
-                 * Show signal box.
-                 */
+$("#audioStatus") .text( "sharing browser audio..." );
 
+$("#connectionStatus") .text( "waiting" );
 
-                $("#signalBox")
-                    .show();
+}
 
+catch (error) {
 
-                $("#signalStatus")
-                    .text(
-                        "generating connection code..."
-                    );
+console.error( "TRANSMITTER ERROR:", error );
 
+$("#homeStatus") .addClass("error") .text( "could not start transmitter" );
 
-            }
+alert( "Could not start the transmitter.\n\n" + error.message );
 
-            catch (error) {
+$("#createBtn") .prop("disabled", false);
 
+}
 
-                console.error(error);
+} );
 
+/* * ===================================================== * RECEIVER * ===================================================== */
 
-                $("#homeStatus")
-                    .text(
-                        "audio sharing failed"
-                    );
+$("#receiverBtn").click( async function () {
 
+const offerCode = $("#offerInput") .val() .trim();
 
-                alert(
-                    "Could not start audio sharing.\n\n" +
-                    error.message
-                );
+if (!offerCode) {
 
-            }
+$("#homeStatus") .addClass("error") .text( "paste an offer code first" );
 
-        }
-    );
+return;
 
+}
 
-    /*
-     * =====================================================
-     * RECEIVER
-     * =====================================================
-     */
+try {
 
+$("#receiverBtn") .prop("disabled", true);
 
-    $("#receiverBtn").click(
-        async function () {
+$("#homeStatus") .removeClass("error") .text( "processing offer..." );
 
+/* * Decode offer. */
 
-            const offerCode =
-                $("#offerInput")
-                    .val()
-                    .trim();
+const offer = decodeSignal( offerCode );
 
+if ( !offer || !offer.type || !offer.sdp ) {
 
-            if (!offerCode) {
+throw new Error( "The offer code is invalid." );
 
+}
 
-                $("#homeStatus")
-                    .text(
-                        "paste an offer code first"
-                    );
+console.log( "Offer decoded" );
 
+/* * Create peer. */
 
-                return;
+createPeerConnection();
 
-            }
+role = "receiver";
 
+/* * Set transmitter's offer. */
 
-            try {
+await peerConnection .setRemoteDescription( offer );
 
+console.log( "Remote offer applied" );
 
-                role =
-                    "receiver";
+/* * Create answer. */
 
+const answer = await peerConnection .createAnswer();
 
-                $("#homeStatus")
-                    .text(
-                        "processing offer..."
-                    );
+await peerConnection .setLocalDescription( answer );
 
+/* * Wait for receiver ICE. */
 
-                /*
-                 * Decode offer.
-                 */
+$("#homeStatus") .text( "generating receiver code..." );
 
+await waitForIceGatheringComplete( peerConnection );
 
-                const offer =
-                    decodeSignal(
-                        offerCode
-                    );
+/* * Get final answer. */
 
+const localDescription = peerConnection.localDescription;
 
-                /*
-                 * Create peer.
-                 */
+if (!localDescription) {
 
+throw new Error( "Could not create receiver answer." );
 
-                createPeerConnection();
+}
 
+const answerCode = encodeSignal( localDescription );
 
-                /*
-                 * Set remote offer.
-                 */
+/* * Show UI. */
 
+$(".box").show();
 
-                await peerConnection
-                    .setRemoteDescription(
-                        offer
-                    );
+$(".panel").hide();
 
+$("#signalBox") .show();
 
-                /*
-                 * Create ANSWER.
-                 */
+$("#signalTitle") .text( "ANSWER — send this back to transmitter" );
 
+$("#signalOutput") .val(answerCode);
 
-                const answer =
-                    await peerConnection
-                        .createAnswer();
+$("#answerSection") .hide();
 
+$("#signalStatus") .removeClass("error") .text( "answer ready — send it back to the transmitter" );
 
-                await peerConnection
-                    .setLocalDescription(
-                        answer
-                    );
+$("#role") .text( "type: receiver" );
 
+$("#audioStatus") .text( "waiting for transmitter audio..." );
 
-                /*
-                 * Show receiver panel.
-                 */
+$("#connectionStatus") .text( "waiting" );
 
+}
 
-                $(".box").hide();
+catch (error) {
 
-                $(".panel").show();
+console.error( "RECEIVER ERROR:", error );
 
+$("#homeStatus") .addClass("error") .text( "invalid offer" );
 
-                $("#role")
-                    .text(
-                        "type: receiver"
-                    );
+alert( "Could not process the offer.\n\n" + error.message );
 
+$("#receiverBtn") .prop("disabled", false);
 
-                $("#signalBox")
-                    .show();
+}
 
+} );
 
-                $("#answerSection")
-                    .hide();
+/* * ===================================================== * APPLY ANSWER * ===================================================== */
 
+$("#applyAnswerBtn").click( async function () {
 
-                $("#signalTitle")
-                    .text(
-                        "ANSWER — send this back to transmitter"
-                    );
+const answerCode = $("#answerInput") .val() .trim();
 
+if (!answerCode) {
 
-                $("#signalStatus")
-                    .text(
-                        "generating answer..."
-                    );
+$("#signalStatus") .addClass("error") .text( "paste the receiver answer first" );
 
+return;
 
-                $("#audioStatus")
-                    .text(
-                        "waiting for transmitter..."
-                    );
+}
 
+if (!peerConnection) {
 
-            }
+$("#signalStatus") .addClass("error") .text( "WebRTC connection does not exist" );
 
-            catch (error) {
+return;
 
+}
 
-                console.error(error);
+try {
 
+$("#applyAnswerBtn") .prop("disabled", true);
 
-                $("#homeStatus")
-                    .text(
-                        "invalid offer"
-                    );
+const answer = decodeSignal( answerCode );
 
+if ( !answer || !answer.type || !answer.sdp ) {
 
-                alert(
-                    "Could not process the offer.\n\n" +
-                    error.message
-                );
+throw new Error( "The answer code is invalid." );
 
-            }
+}
 
-        }
-    );
+await peerConnection .setRemoteDescription( answer );
 
+$("#signalStatus") .removeClass("error") .text( "answer applied — connecting..." );
 
-    /*
-     * =====================================================
-     * APPLY ANSWER
-     * =====================================================
-     */
+$("#connectionStatus") .text( "connecting" );
 
+console.log( "Receiver answer applied" );
 
-    $("#applyAnswerBtn").click(
-        async function () {
+}
 
+catch (error) {
 
-            const answerCode =
-                $("#answerInput")
-                    .val()
-                    .trim();
+console.error( "ANSWER ERROR:", error );
 
+$("#signalStatus") .addClass("error") .text( "invalid answer code" );
 
-            if (!answerCode) {
+alert( "Could not apply the answer.\n\n" + error.message );
 
+$("#applyAnswerBtn") .prop("disabled", false);
 
-                $("#signalStatus")
-                    .text(
-                        "paste the receiver answer first"
-                    );
+}
 
+} );
 
-                return;
+/* * ===================================================== * SIGNAL ENCODING * ===================================================== * * Converts WebRTC SDP into a UTF-8-safe Base64 string. */
 
-            }
+function encodeSignal(description) {
 
+const json = JSON.stringify(description);
 
-            try {
+const bytes = new TextEncoder() .encode(json);
 
+let binary = "";
 
-                const answer =
-                    decodeSignal(
-                        answerCode
-                    );
+for ( let i = 0; i < bytes.length; i++ ) {
 
+binary += String.fromCharCode( bytes[i] );
 
-                await peerConnection
-                    .setRemoteDescription(
-                        answer
-                    );
+}
 
+return btoa(binary);
 
-                $("#signalStatus")
-                    .text(
-                        "answer applied — connecting..."
-                    );
+}
 
+/* * ===================================================== * SIGNAL DECODING * ===================================================== */
 
-            }
+function decodeSignal(code) {
 
-            catch (error) {
+/* * Remove accidental whitespace. */
 
+code = code.trim();
 
-                console.error(error);
+const binary = atob(code);
 
+const bytes = new Uint8Array( binary.length );
 
-                alert(
-                    "Invalid answer code.\n\n" +
-                    error.message
-                );
+for ( let i = 0; i < binary.length; i++ ) {
 
-            }
+bytes[i] = binary.charCodeAt(i);
 
-        }
-    );
+}
 
+const json = new TextDecoder() .decode(bytes);
 
-    /*
-     * =====================================================
-     * ENCODE SIGNAL
-     * =====================================================
-     *
-     * Convert SDP into a copyable string.
-     */
+return JSON.parse(json);
 
+}
 
-    function encodeSignal(description) {
+/* * ===================================================== * COPY CODE * ===================================================== */
 
+$("#copyBtn").click( async function () {
 
-        const json =
-            JSON.stringify(description);
+const code = $("#signalOutput") .val();
 
+if (!code) {
 
-        /*
-         * UTF-8 safe Base64.
-         */
+return;
 
+}
 
-        return btoa(
-            encodeURIComponent(json)
-        );
+try {
 
-    }
+await navigator .clipboard .writeText(code);
 
+$("#copyBtn") .text("copied!");
 
-    /*
-     * =====================================================
-     * DECODE SIGNAL
-     * =====================================================
-     */
+setTimeout( function () {
 
+$("#copyBtn") .text("copy code");
 
-    function decodeSignal(code) {
+}, 1500 );
 
+}
 
-        const json =
-            decodeURIComponent(
-                atob(code)
-            );
+catch (error) {
 
+console.warn( "Clipboard API failed:", error );
 
-        return JSON.parse(json);
+/* * Old browser fallback. */
 
-    }
+$("#signalOutput") .focus() .select();
 
+try {
 
-    /*
-     * =====================================================
-     * COPY CODE
-     * =====================================================
-     */
+document.execCommand( "copy" );
 
+$("#copyBtn") .text("copied!");
 
-    $("#copyBtn").click(
-        async function () {
+}
 
+catch (copyError) {
 
-            const code =
-                $("#signalOutput")
-                    .val();
+alert( "Copy failed. Please manually copy the code." );
 
+}
 
-            try {
+}
 
+} );
 
-                await navigator
-                    .clipboard
-                    .writeText(code);
+/* * ===================================================== * VOLUME * ===================================================== */
 
+$("#volume").on( "input", function () {
 
-                $("#copyBtn")
-                    .text("copied!");
+const volume = Number( $(this).val() ) / 100;
 
+if (remoteAudioElement) {
 
-                setTimeout(
-                    function () {
+remoteAudioElement.volume = volume;
 
-                        $("#copyBtn")
-                            .text("copy code");
+}
 
-                    },
-                    1500
-                );
+} );
 
+/* * ===================================================== * BACK BUTTON * ===================================================== */
 
-            }
+$("#backBtn").click( function () {
 
-            catch (error) {
+/* * Close WebRTC. */
 
+if (peerConnection) {
 
-                /*
-                 * Fallback for browsers where
-                 * Clipboard API is unavailable.
-                 */
+try {
 
+peerConnection.close();
 
-                $("#signalOutput")
-                    .select();
+}
 
+catch (error) {
 
-                document.execCommand(
-                    "copy"
-                );
+console.warn(error);
 
+}
 
-                $("#copyBtn")
-                    .text("copied!");
+}
 
-            }
+/* * Stop local capture. */
 
-        }
-    );
+if (localAudioStream) {
 
+localAudioStream .getTracks() .forEach( function (track) {
 
-    /*
-     * =====================================================
-     * VOLUME
-     * =====================================================
-     */
+track.stop();
 
+} );
 
-    $("#volume").on(
-        "input",
-        function () {
+}
 
+/* * Stop remote audio. */
 
-            const volume =
-                $(this).val() / 100;
+if (remoteAudioElement) {
 
+remoteAudioElement.pause();
 
-            if (remoteAudioElement) {
+remoteAudioElement.srcObject = null;
 
+}
 
-                remoteAudioElement.volume =
-                    volume;
+location.reload();
 
-            }
+} );
 
-        }
-    );
+/* * ===================================================== * SECURE CONTEXT CHECK * ===================================================== */
 
+if ( !window.isSecureContext && location.hostname !== "localhost" ) {
 
-    /*
-     * =====================================================
-     * BACK BUTTON
-     * =====================================================
-     */
+$("#homeStatus") .addClass("error") .text( "Use HTTPS or localhost for audio sharing." );
 
+}
 
-    $("#backBtn").click(
-        function () {
+/* * ===================================================== * BROWSER SUPPORT CHECK * ===================================================== */
 
+if ( !window.RTCPeerConnection ) {
 
-            /*
-             * Close WebRTC.
-             */
+$("#homeStatus") .addClass("error") .text( "This browser does not support WebRTC." );
 
+$("#createBtn") .prop("disabled", true);
 
-            if (peerConnection) {
+$("#receiverBtn") .prop("disabled", true);
 
-                peerConnection.close();
-
-            }
-
-
-            /*
-             * Stop captured audio.
-             */
-
-
-            if (localAudioStream) {
-
-
-                localAudioStream
-                    .getTracks()
-                    .forEach(
-                        function (track) {
-
-                            track.stop();
-
-                        }
-                    );
-
-            }
-
-
-            location.reload();
-
-        }
-    );
-
-
-    /*
-     * =====================================================
-     * SAFETY CHECK
-     * =====================================================
-     *
-     * getDisplayMedia requires a secure context.
-     */
-
-
-    if (
-        !window.isSecureContext &&
-        location.hostname !== "localhost"
-    ) {
-
-
-        $("#homeStatus")
-            .text(
-                "Use HTTPS or localhost for audio sharing."
-            )
-            .addClass("error");
-
-    }
+}
 
 });
 
 </script>
 
 </body>
+
 </html>
